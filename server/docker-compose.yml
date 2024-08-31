@@ -1,0 +1,18 @@
+services:
+
+    tart_monitor:
+        build: 
+            context: ./
+        volumes:
+            -   ~/tart_monitor_store:/data
+        ports: 
+            - 5000:5000
+        # environment:
+        #     # Change the following to be something secure. You will use this to login to your telescope from the web api.
+        #     - LOGIN_PW=${LOGIN_PW}
+        restart: always
+        logging:
+            driver: "json-file"
+            options:
+                max-file: "5"
+                max-size: "10m"
