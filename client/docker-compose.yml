@@ -1,0 +1,14 @@
+services:
+
+    monitor_client:
+        build: 
+            context: ./
+        environment:
+            - PYTHONUNBUFFERED=1
+            - TART_API=${TART_API}
+        restart: always
+        logging:
+            driver: "json-file"
+            options:
+                max-file: "5"
+                max-size: "10m"
