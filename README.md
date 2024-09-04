@@ -11,6 +11,8 @@ This runs on each tart as a microservice. Sends a ping with its basic info to th
 
 ## Server
 
+https://fastapi.tiangolo.com/tutorial/sql-databases/#review-all-the-files
+
 Runs inside the tailnet, listening on a host tart-monitor
 
 API:

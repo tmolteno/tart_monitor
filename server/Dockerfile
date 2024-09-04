@@ -13,11 +13,13 @@ ENV VIRTUAL_ENV=/opt/venv
 RUN python3 -m venv --system-site-packages $VIRTUAL_ENV
 
 RUN . /opt/venv/bin/activate && pip3 install  fastapi[standard]
+RUN . /opt/venv/bin/activate && pip3 install  sqlalchemy
 
 ENV CONFIG_DIR=/config_data
 
 WORKDIR /python_code
-COPY ./main.py .
+ADD monitor_app monitor_app
 
+RUN ls -l
 EXPOSE 8000
-CMD ["/opt/venv/bin/fastapi", "dev", "--port=5000", "main.py"]
+CMD ["/opt/venv/bin/uvicorn", "monitor_app.main:app", "--port=8000", "--host=0.0.0.0"]
