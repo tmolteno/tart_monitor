@@ -1,45 +1,53 @@
-import sqlite3
+from fastapi import Depends, FastAPI, HTTPException
+from sqlalchemy.orm import Session
 
-from typing import Union
-from datetime import datetime
+from . import crud, models, schemas
+from .database import SessionLocal, engine
 
-from fastapi import FastAPI
-from pydantic import BaseModel
-
-
-con = sqlite3.connect("tart_monitor.db")
+models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
-class Tart(BaseModel):
-    name: str
-    lat: float
-    lon: float
-    last_ping: datetime
-    
 
-@app.get("/")
-def read_root():
-    return {"Hello": "World"}
+# Dependency
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
 
-@app.get("/items/{item_id}")
-def read_item(item_id: int, q: Union[str, None] = None):
-    '''
-        The comment goes here.
-    '''
-    return {"item_id": item_id, "q": q}
-
-@app.put("/items/{item_id}")
-def update_item(item_id: int, tart: Tart):
-    return {"item_name": tart.name, "item_id": item_id}
+@app.post("/users/", response_model=schemas.User)
+def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
+    db_user = crud.get_user_by_email(db, email=user.email)
+    if db_user:
+        raise HTTPException(status_code=400, detail="Email already registered")
+    return crud.create_user(db=db, user=user)
 
 
-if __name__ == "__main__":
-    uvicorn.run(
-        "main:app",
-        host="0.0.0.0",
-        port=8000,
-        log_level="debug",
-        reload=True,
-    )
+@app.get("/users/", response_model=list[schemas.User])
+def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    users = crud.get_users(db, skip=skip, limit=limit)
+    return users
+
+
+@app.get("/users/{user_id}", response_model=schemas.User)
+def read_user(user_id: int, db: Session = Depends(get_db)):
+    db_user = crud.get_user(db, user_id=user_id)
+    if db_user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    return db_user
+
+
+@app.post("/users/{user_id}/items/", response_model=schemas.Item)
+def create_item_for_user(
+    user_id: int, item: schemas.ItemCreate, db: Session = Depends(get_db)
+):
+    return crud.create_user_item(db=db, item=item, user_id=user_id)
+
+
+@app.get("/items/", response_model=list[schemas.Item])
+def read_items(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    items = crud.get_items(db, skip=skip, limit=limit)
+    return items

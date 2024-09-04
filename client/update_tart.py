@@ -9,7 +9,7 @@ tart_name=os.environ['TART_API']
 while True:
     try:
         print(f"Starting ping")
-        response = requests.get('http://api.elec.ac.nz/tart_monitor')
+        response = requests.get(f"http://api.elec.ac.nz/tart_monitor/${tart_api}")
 
         # Print the response text
         print(response.text)
