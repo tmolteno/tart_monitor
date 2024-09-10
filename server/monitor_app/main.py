@@ -18,36 +18,36 @@ def get_db():
         db.close()
 
 
-@app.post("/users/", response_model=schemas.User)
-def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
-    db_user = crud.get_user_by_email(db, email=user.email)
-    if db_user:
+@app.post("/tarts/", response_model=schemas.User)
+def create_tart(tart: schemas.UserCreate, db: Session = Depends(get_db)):
+    db_tart = crud.get_tart_by_email(db, email=tart.email)
+    if db_tart:
         raise HTTPException(status_code=400, detail="Email already registered")
-    return crud.create_user(db=db, user=user)
+    return crud.create_tart(db=db, tart=tart)
 
 
-@app.get("/users/", response_model=list[schemas.User])
-def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    users = crud.get_users(db, skip=skip, limit=limit)
-    return users
+@app.get("/tarts/", response_model=list[schemas.User])
+def read_tarts(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    tarts = crud.get_tarts(db, skip=skip, limit=limit)
+    return tarts
 
 
-@app.get("/users/{user_id}", response_model=schemas.User)
-def read_user(user_id: int, db: Session = Depends(get_db)):
-    db_user = crud.get_user(db, user_id=user_id)
-    if db_user is None:
+@app.get("/tarts/{tart_id}", response_model=schemas.User)
+def read_tart(tart_id: int, db: Session = Depends(get_db)):
+    db_tart = crud.get_tart(db, tart_id=tart_id)
+    if db_tart is None:
         raise HTTPException(status_code=404, detail="User not found")
-    return db_user
+    return db_tart
 
 
-@app.post("/users/{user_id}/items/", response_model=schemas.Item)
-def create_item_for_user(
-    user_id: int, item: schemas.ItemCreate, db: Session = Depends(get_db)
+@app.post("/tarts/{tart_id}/statuses/", response_model=schemas.Item)
+def create_status_for_tart(
+    tart_id: int, status: schemas.ItemCreate, db: Session = Depends(get_db)
 ):
-    return crud.create_user_item(db=db, item=item, user_id=user_id)
+    return crud.create_tart_status(db=db, status=status, tart_id=tart_id)
 
 
-@app.get("/items/", response_model=list[schemas.Item])
-def read_items(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    items = crud.get_items(db, skip=skip, limit=limit)
-    return items
+@app.get("/statuses/", response_model=list[schemas.Item])
+def read_statuses(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    statuses = crud.get_statuses(db, skip=skip, limit=limit)
+    return statuses
