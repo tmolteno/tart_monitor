@@ -5,4 +5,4 @@ unicorn:
 	uvicorn monitor_app.main:app --reload
 
 install:
-	pip3 install fastapi[standard] sqlalchemy
+	pip3 install fastapi[standard] sqlalchemy --upgrade

@@ -1,9 +1,10 @@
+from datetime import datetime
 from pydantic import BaseModel
 
 
 class StatusBase(BaseModel):
-    title: str
-    description: str | None = None
+    ts: datetime
+    last_seen: datetime | None = None
 
 
 class StatusCreate(StatusBase):
@@ -15,21 +16,27 @@ class Status(StatusBase):
     owner_id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class TartBase(BaseModel):
-    email: str
+    api_key: str
 
 
 class TartCreate(TartBase):
-    password: str
+    name: str
+    lat: float
+    lon: float
+    alt: float
 
 
 class Tart(TartBase):
     id: int
+    lat: float
+    lon: float
+    alt: float
     is_active: bool
-    items: list[Status] = []
+    statuses: list[Status] = []
 
     class Config:
-        orm_mode = True
+        from_attributes = True

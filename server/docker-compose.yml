@@ -7,9 +7,8 @@ services:
             -   ~/tart_monitor_store:/data
         ports: 
             - 8000:8000
-        # environment:
-        #     # Change the following to be something secure. You will use this to login to your telescope from the web api.
-        #     - LOGIN_PW=${LOGIN_PW}
+        environment:
+            - DB_ROOT=/data
         restart: always
         logging:
             driver: "json-file"

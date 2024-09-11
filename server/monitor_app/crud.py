@@ -7,8 +7,8 @@ def get_tart(db: Session, tart_id: int):
     return db.query(models.Tart).filter(models.Tart.id == tart_id).first()
 
 
-def get_tart_by_email(db: Session, email: str):
-    return db.query(models.Tart).filter(models.Tart.email == email).first()
+def get_tart_by_api_key(db: Session, api_key: str):
+    return db.query(models.Tart).filter(models.Tart.api_key == api_key).first()
 
 
 def get_tarts(db: Session, skip: int = 0, limit: int = 100):
@@ -16,8 +16,7 @@ def get_tarts(db: Session, skip: int = 0, limit: int = 100):
 
 
 def create_tart(db: Session, tart: schemas.TartCreate):
-    fake_hashed_password = tart.password + "notreallyhashed"
-    db_tart = models.Tart(email=tart.email, hashed_password=fake_hashed_password)
+    db_tart = models.Tart(api_key=tart.api_key, name=tart.name, lat=tart.lat, lon=tart.lon, alt=tart.alt)
     db.add(db_tart)
     db.commit()
     db.refresh(db_tart)
